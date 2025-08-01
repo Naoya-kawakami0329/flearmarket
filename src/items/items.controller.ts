@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { Item } from './items.model';
 
@@ -9,6 +9,12 @@ export class ItemsController {
   findAll(): Item[] {
     return this.itemsService.findAll();
   }
+
+  @Get(':id')
+  findByID(@Param('id') id: string): Item | undefined {
+    return this.itemsService.findById(id);
+  }
+
   @Post()
   create(
     @Body('id') id: string,
