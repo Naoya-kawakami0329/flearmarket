@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Item } from './items.model';
+import { Item } from '../../generated/prisma';
 import { CreateItemDto } from './dto/create-item.dto';
-import { v4 as uuid } from 'uuid';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ItemsService {
+  constructor(private readonly prismaService: PrismaService) {}
   private items: Item[] = [];
   findAll(): Item[] {
     return this.items;
@@ -18,14 +19,17 @@ export class ItemsService {
     return found;
   }
 
-  create(createItemDto: CreateItemDto): Item {
-    const item: Item = {
-      id: uuid(),
-      ...createItemDto,
-      status: 'ON_SALE',
-    };
-    this.items.push(item);
-    return item;
+  async create(createItemDto: CreateItemDto): Promise<Item> {
+    const { name, price, description } = createItemDto;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const createdItem = await this.prismaService.item.create({
+      data: {
+        name,
+        price,
+        description,
+      },
+    });
+    return createdItem as Item;
   }
 
   updateStatus(id: string): Item | undefined {
