@@ -30,6 +30,8 @@ export class ItemsService {
         name,
         price,
         description,
+        // TODO: 実際のユーザーIDを取得する
+        userId: '00000000-0000-0000-0000-000000000000',
       },
     });
     return createdItem;
