@@ -23,15 +23,14 @@ export class ItemsService {
     return found;
   }
 
-  async create(createItemDto: CreateItemDto): Promise<Item> {
+  async create(createItemDto: CreateItemDto, userId: string): Promise<Item> {
     const { name, price, description } = createItemDto;
     const createdItem = await this.prismaService.item.create({
       data: {
         name,
         price,
         description,
-        // TODO: 実際のユーザーIDを取得する
-        userId: '00000000-0000-0000-0000-000000000000',
+        userId,
       },
     });
     return createdItem;
@@ -48,9 +47,9 @@ export class ItemsService {
     return item;
   }
 
-  async delete(id: string): Promise<Item> {
+  async delete(id: string, userId: string): Promise<Item> {
     const item = await this.prismaService.item.delete({
-      where: { id },
+      where: { id, userId },
     });
     if (!item) {
       throw new NotFoundException(`Item with id ${id} not found`);
